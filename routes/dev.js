@@ -1,7 +1,10 @@
 var express = require('express');
 const { json } = require('express/lib/response');
 var bodyParser = require('body-parser')
+var moment = require('moment')
 
+
+const ok_flag = {"status": "ok"}
 
 var router = express.Router();
 
@@ -23,8 +26,23 @@ router.post('/', bodyParser.json(),function(req,res){
   var result = req.body
 
   console.log(result)
+  console.log(result.deviceid)
+  console.log(result.temprature)
 
-  res.render('dev',{ title: 'dev page' })
+  console.log(moment().format('LTS'))
+  console.log(moment().format('L'))
+
+  mysqlconnection.query('INSERT INTO device_test (deviceid, temprature, humidity, date, time) VALUES (?, ?, ?, ?, ?)',
+                          [result.deviceid, result.temprature, result.humidity, moment().format('YYYY-MM-DD'), moment().format('HH:mm:ss')],function(err, result){
+                            if(err) {
+                              console.log(err)
+                            }
+                            console.log(result)
+                          })
+
+
+  res.send(ok_flag)
+  //res.render('dev',{ title: 'dev page' })
 
 })
 
